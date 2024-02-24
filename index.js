@@ -5,51 +5,83 @@ const app = express()
 app.use(express.json())
 
 const users = []
+
+const checkeruserid = (Request, response, next ) => {
+  const { id } = Request.params
+
+  const index = users.findIndex(user => user.id === id)
+
+  if (index < 0) {
+    return response.status(404).json({ message: "user not found" })
+  }
+
+  Request.userindex = index
+  Request.userid = id
+
+  next()
+
+}
+
+
 app.get('/users', (request, response) => {
 
-    console.log(request.body)
 
-    return response.json(users)
+  return response.json(users)
 })
 
 app.post('/users', (request, response) => {
 
-    const {name , age} = request.body
+  const { name, age, city } = request.body
 
-    const user = {id:uuid.v4(), name , age } 
+  const user = { id: uuid.v4(), name, age, city }
 
-    users.push(user)
+  users.push(user)
 
-    return response.status(201).json(user)
+  return response.status(201).json(user)
 })
 
-app.put('/users/:id', (request, response) => {
+app.put('/users/:id', checkeruserid, (request, response) => {
 
-    const { id} = request.params
-    const { name , age} = request.body
+  const index = request.userindex
+  const { name, age, city } = request.body
+  const id = request.userid
 
-    const updateuser = {id , name , age}
+  const updateuser = { id, name, age, city }
+
   
-    const index = users.findIndex(user => user.id === id)
-
-  if (index < 0) {
-    return response. status(404).json( {Error: "user not found"})
-  }
 
   users[index] = updateuser
 
-    return response.json(updateuser)
+
+  return response.json(updateuser)
 })
-app.delete('/users/:id', (request, response) => {
 
-const {id} = request.params
+app.delete('/users/:id',checkeruserid, (request, response) => {
 
-const index = users.findIndex(user => user.id === id)
+  const index = request.userindex
 
-if (index < 0) {
-    return response. status(404).json( {Error: "user not found"})
-  }
-  users.splice(index,1)
-    return response.status(204).json()
+  users.splice(index, 1)
+
+  return response.status(204).json()
 })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 app.listen(3000)
