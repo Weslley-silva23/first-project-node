@@ -64,7 +64,7 @@ app.delete('/users/:id',checkeruserid, (request, response) => {
 
   return response.status(204).json()
 })
-
+console
 
 
 
