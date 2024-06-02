@@ -1,8 +1,11 @@
 const express = require('express');
 const uuid = require('uuid')
+const cors = require('cors');
 
+const port = 3001;
 const app = express()
 app.use(express.json())
+app.use(cors())
 
 const users = []
 app.get('/users', (request, response) => {
@@ -52,4 +55,4 @@ if (index < 0) {
   users.splice(index,1)
     return response.status(204).json()
 })
-app.listen(3000)
+app.listen(3001);
